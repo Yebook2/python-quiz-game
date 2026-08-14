@@ -1,34 +1,28 @@
-# 1. 퀴즈 클래스 정의
 class Quiz:
     def __init__(self, question, choices, answer):
-        self.question = question  # 문제 내용
-        self.choices = choices    # 보기 (리스트)
-        self.answer = answer      # 정답 번호 (1, 2, 3, 4)
+        self.question = question 
+        self.choices = choices    
+        self.answer = answer   
 
     def is_correct(self, user_answer):
-        # 사용자가 입력한 번호가 정답과 일치하는지 확인
         return user_answer == str(self.answer)
 
-# 2. 퀴즈 데이터 생성 (파일에서 읽어오기)
 def get_quiz_list():
     quiz_objects = []
     try:
         with open("quizzes.txt", "r", encoding="utf-8") as file:
             for line in file:
-                # 줄바꿈 제거 후 '|' 기호로 분리
                 parts = line.strip().split("|")
                 if len(parts) == 3:
                     question = parts[0]
-                    choices = parts[1].split(",") # 쉼표로 보기 분리
+                    choices = parts[1].split(",") 
                     answer = int(parts[2])
-                    # Quiz 객체 생성 후 리스트에 추가
                     quiz_objects.append(Quiz(question, choices, answer))
     except FileNotFoundError:
-        print("❌ quizzes.txt 파일을 찾을 수 없습니다.")
+        print("quizzes.txt 파일을 찾을 수 없습니다.")
     
     return quiz_objects
 
-# 3. 게임 실행 함수
 def start_game():
     quizzes = get_quiz_list()
     score = 0
@@ -42,34 +36,27 @@ def start_game():
         
         user_input = input("정답 번호를 입력하세요: ")
 
-        # --- 여기서부터 예외 처리 시작 ---
         try:
-            # 입력받은 값이 숫자인지 확인하기 위해 int()로 변환 시도
             user_answer = int(user_input) 
             
-            # 숫자로 변환이 성공했다면 기존 정답 체크 로직 실행
             if q.is_correct(user_input):
                 print("정답입니다! ✨")
                 score += 1
             else:
-                print(f"아쉽네요. 정답은 {q.answer}번입니다. 😅")
+                print(f"아쉽네요. 정답은 {q.answer}번입니다. ")
         
         except ValueError:
-            # 사용자가 숫자가 아닌 문자(예: 'abc')를 입력했을 때 실행됨
-            print("❌ 숫자만 입력해주세요! 이번 문제는 틀린 것으로 처리됩니다.")
-        # --- 예외 처리 끝 ---
+            print("숫자만 입력해주세요! 이번 문제는 틀린 것으로 처리됩니다.")
 
     print(f"\n모든 문제를 풀었습니다!")
     print(f"당신의 최종 점수: {score} / {len(quizzes)}")
     save_score(score) 
 
-        # 점수를 파일에 저장하는 함수
 def save_score(score):
-    # "a" 모드는 'append'의 약자로, 기존 내용 뒤에 계속 이어 붙인다는 뜻이에요!
     with open("scores.txt", "a", encoding="utf-8") as file:
         file.write(f"최종 점수: {score}\n")
-    print("✅ 점수가 scores.txt에 저장되었습니다.")
-# 4. 메인 메뉴
+    print("점수가 scores.txt에 저장되었습니다.")
+
 def main():
     while True:
         print("\n" + "=" * 20)
