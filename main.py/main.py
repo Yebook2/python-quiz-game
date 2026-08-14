@@ -25,23 +25,33 @@ def start_game():
     score = 0
 
     print("\n--- 퀴즈를 시작합니다! ---")
-    
+
     for i, q in enumerate(quizzes):
         print(f"\n문제 {i+1}: {q.question}")
         for choice in q.choices:
             print(choice)
         
         user_input = input("정답 번호를 입력하세요: ")
+
+        # --- 여기서부터 예외 처리 시작 ---
+        try:
+            # 입력받은 값이 숫자인지 확인하기 위해 int()로 변환 시도
+            user_answer = int(user_input) 
+            
+            # 숫자로 변환이 성공했다면 기존 정답 체크 로직 실행
+            if q.is_correct(user_input):
+                print("정답입니다! ✨")
+                score += 1
+            else:
+                print(f"아쉽네요. 정답은 {q.answer}번입니다. 😅")
         
-        if q.is_correct(user_input):
-            print("정답입니다! ✨")
-            score += 1
-        else:
-            print(f"아쉽네요. 정답은 {q.answer}번입니다. 😢")
+        except ValueError:
+            # 사용자가 숫자가 아닌 문자(예: 'abc')를 입력했을 때 실행됨
+            print("❌ 숫자만 입력해주세요! 이번 문제는 틀린 것으로 처리됩니다.")
+        # --- 예외 처리 끝 ---
 
     print(f"\n모든 문제를 풀었습니다!")
     print(f"당신의 최종 점수: {score} / {len(quizzes)}")
-
 # 4. 메인 메뉴
 def main():
     while True:
