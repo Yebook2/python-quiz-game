@@ -9,15 +9,24 @@ class Quiz:
         # 사용자가 입력한 번호가 정답과 일치하는지 확인
         return user_answer == str(self.answer)
 
-# 2. 퀴즈 데이터 생성
+# 2. 퀴즈 데이터 생성 (파일에서 읽어오기)
 def get_quiz_list():
-    return [
-        Quiz("파이썬에서 출력을 할 때 사용하는 함수는?", ["1. input", "2. print", "3. len", "4. type"], 2),
-        Quiz("대한민국의 수도는?", ["1. 부산", "2. 인천", "3. 서울", "4. 대구"], 3),
-        Quiz("파이썬의 상징 동물은?", ["1. 사자", "2. 호랑이", "3. 뱀", "4. 독수리"], 3),
-        Quiz("1 + 1은?", ["1. 1", "2. 2", "3. 3", "4. 4"], 2),
-        Quiz("리스트에 요소를 추가하는 함수는?", ["1. add", "2. push", "3. append", "4. insert"], 3)
-    ]
+    quiz_objects = []
+    try:
+        with open("quizzes.txt", "r", encoding="utf-8") as file:
+            for line in file:
+                # 줄바꿈 제거 후 '|' 기호로 분리
+                parts = line.strip().split("|")
+                if len(parts) == 3:
+                    question = parts[0]
+                    choices = parts[1].split(",") # 쉼표로 보기 분리
+                    answer = int(parts[2])
+                    # Quiz 객체 생성 후 리스트에 추가
+                    quiz_objects.append(Quiz(question, choices, answer))
+    except FileNotFoundError:
+        print("❌ quizzes.txt 파일을 찾을 수 없습니다.")
+    
+    return quiz_objects
 
 # 3. 게임 실행 함수
 def start_game():
