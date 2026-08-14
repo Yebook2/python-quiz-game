@@ -61,6 +61,14 @@ def start_game():
 
     print(f"\n모든 문제를 풀었습니다!")
     print(f"당신의 최종 점수: {score} / {len(quizzes)}")
+    save_score(score) 
+
+        # 점수를 파일에 저장하는 함수
+def save_score(score):
+    # "a" 모드는 'append'의 약자로, 기존 내용 뒤에 계속 이어 붙인다는 뜻이에요!
+    with open("scores.txt", "a", encoding="utf-8") as file:
+        file.write(f"최종 점수: {score}\n")
+    print("✅ 점수가 scores.txt에 저장되었습니다.")
 # 4. 메인 메뉴
 def main():
     while True:
@@ -83,3 +91,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
