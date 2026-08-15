@@ -23,15 +23,18 @@ class QuizGame:
         self.load_data()
 
     def load_data(self):
-        if os.path.exists(self.filename):
-            try:
-                with open(self.filename, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    self.quizzes = [Quiz(q['question'], q['choices'], q['answer']) for q in data.get('quizzes', [])]
-                    self.high_score = data.get('high_score', 0)
-            except (json.JSONDecodeError, FileNotFoundError):
+        try:
+            with open(self.filename, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                self.quizzes = [Quiz(q['question'], q['choices'], q['answer']) for q in data.get('quizzes', [])]
+                self.high_score = data.get('high_score', 0)
+            
+            if not self.quizzes:
                 self.set_default_quizzes()
-        else:
+                
+        except (FileNotFoundError, json.JSONDecodeError):
+      
+       
             self.set_default_quizzes()
 
     def set_default_quizzes(self):
@@ -146,3 +149,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
