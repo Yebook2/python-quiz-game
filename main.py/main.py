@@ -49,8 +49,11 @@ class QuizGame:
             "quizzes": [q.to_dict() for q in self.quizzes],
             "high_score": self.high_score
         }
-        with open(self.filename, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+        try:
+            with open(self.filename, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+        except IOError:
+            print("\n[경고] 데이터를 저장하는 중 오류가 발생했습니다.")
 
     def play(self):
         if not self.quizzes:
@@ -71,10 +74,10 @@ class QuizGame:
                         break
                     print("1~4 사이의 숫자를 입력해주세요.")
                 except ValueError:
-                    print("숫자만 입력해주세요.")
+                    print("숫자만 입력해주세요. (빈칸 입력 불가)")
 
             if q.is_correct(user_input):
-                print("정답입니다! ✨")
+                print("정답입니다!")
                 score += 1
             else:
                 print(f"아쉽네요. 정답은 {q.answer}번입니다.")
@@ -84,7 +87,7 @@ class QuizGame:
         
         if score > self.high_score:
             self.high_score = score
-            print("🎊 최고 기록 갱신!")
+            print("최고 기록 갱신!")
             self.save_data()
 
     def add_quiz(self):
@@ -108,14 +111,17 @@ class QuizGame:
         for i, q in enumerate(self.quizzes):
             print(f"{i+1}. {q.question}")
 
-def signal_handler(sig, frame):
-    print("\n\n강제 종료 감지! 프로그램을 안전하게 종료합니다.")
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, signal_handler)
 
 def main():
     game = QuizGame()
+
+    def signal_handler(sig, frame):
+        print("\n\n강제 종료 감지! 현재 상태를 저장하고 안전하게 종료합니다.")
+        game.save_data()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
     while True:
         print(f"\n=== 파이썬 퀴즈 게임 (최고점수: {game.high_score}) ===")
         print("1. 게임 시작")
@@ -132,7 +138,8 @@ def main():
         elif choice == '3':
             game.show_quizzes()
         elif choice == '4':
-            print("게임을 종료합니다. 다음에 또 봐요!")
+            game.save_data()
+            print("데이터를 안전하게 저장했습니다. 게임을 종료합니다.")
             break
         else:
             print("잘못된 입력입니다. 1~4번을 선택해주세요.")
